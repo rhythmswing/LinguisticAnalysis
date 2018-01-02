@@ -4,6 +4,9 @@ from io import StringIO
 from textblob import TextBlob
 import numpy as np
 
+import time 
+import sys
+
 def get_origin(word):
     #url = 'http://www.etymonline.com/word/%s' % word
     url = 'https://en.wiktionary.org/wiki/%s' % word
@@ -25,13 +28,13 @@ def get_origin(word):
     
 def sample_origin(text, sample_size=100):
     words = TextBlob(text).words
-    sample_index = np.random.choice(len(words), sample_size*5)
-    sample_words = np.array(words)[sample_index].tolist()
     origins = []
-    index = 0
-    while len(origins) < sample_size and index < len(sample_words):
-        if sample_words[index].isalpha() and len(sample_words[index]) > 1: 
-            origin = get_origin(sample_words[index].lower())
+    while len(origins) < sample_size:
+        sys.stdout.write('\r%f%%' % (100.0 * len(origins) / sample_size))
+        sys.stdout.flush()
+        index = np.random.choice(len(words))
+        if words[index].isalpha() and len(words[index]) > 1: 
+            origin = get_origin(words[index].lower())
             if origin != 'Not Found':
                 origins.append(origin)
         index+=1
